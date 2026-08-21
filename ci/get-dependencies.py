@@ -83,7 +83,10 @@ def preprocess_yaml_with_jinja(content):
 
 def process_placeholder(placeholder, seed_dependencies):
     """
-    Process a placeholder by replacing underscores with hyphens and looking up the version.
+    Process a placeholder by looking up the version in the seed environment.
+
+    Tries the hyphenated form first (e.g. scikit_bio -> scikit-bio), then falls
+    back to the original placeholder (e.g. das_tool stays das_tool).
 
     Args:
         placeholder (str): The placeholder name (without {{ }})
@@ -92,15 +95,17 @@ def process_placeholder(placeholder, seed_dependencies):
     Returns:
         str: The version string to use for the placeholder
     """
-    # Replace underscores with hyphens
-    package_name = placeholder.replace('_', '-')
+    candidates = [placeholder.replace('_', '-'), placeholder]
+    seen = set()
+    for package_name in candidates:
+        if package_name in seen:
+            continue
+        seen.add(package_name)
+        if package_name in seed_dependencies and seed_dependencies[package_name]:
+            return seed_dependencies[package_name]
 
-    # Look up the version in the seed dependencies
-    if package_name in seed_dependencies and seed_dependencies[package_name]:
-        return seed_dependencies[package_name]
-    else:
-        print(f"Warning: Version for {package_name} not found in seed environment")
-        return ">=0.0.0"  # Default version if not found
+    print(f"Warning: Version for {placeholder} not found in seed environment")
+    return ">=0.0.0"  # Default version if not found
 
 
 def main():
