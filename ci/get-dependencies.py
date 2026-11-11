@@ -199,10 +199,10 @@ def main():
             error_message += "Please check the YAML syntax in the conda recipe file."
             raise RuntimeError(error_message)
 
-    # Only add q2cli if it's not already present in dependencies
-    q2cli_present = any("q2cli" in dep for dep in dependencies)
+    # Only add rachis-cli if it's not already present in dependencies
+    q2cli_present = any("rachis-cli" in dep for dep in dependencies)
     if not q2cli_present:
-        dependencies.append("  - q2cli")
+        dependencies.append("  - rachis-cli")
 
     # Create a dictionary to hold the YAML data
     yaml_data = {
