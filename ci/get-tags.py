@@ -4,7 +4,6 @@ import sys
 
 
 def get_latest_tags(repo):
-    """Fetch tag names for a GitHub repository using the CI token when set."""
     url = f'https://api.github.com/repos/{repo}/tags'
     token = os.getenv('GITHUB_TOKEN')
     headers = {'Authorization': f'Bearer {token}'} if token else {}
